@@ -24,4 +24,4 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Attempt to run docker-compose
-        run: docker compose up --build
+        run: docker compose build
