@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './Dashboard.css';
 
-const Dashboard = ({ message }) => {
+const Dashboard = ({ users = [] }) => {
   const [activeTab, setActiveTab] = useState('ITEM 1');
   const tabs = ['ITEM 1', 'ITEM 2', 'ITEM 3', 'ITEM 4'];
 
@@ -73,7 +73,19 @@ const Dashboard = ({ message }) => {
             <div className="tab-content-box">
               {activeTab === 'ITEM 1' && (
                 <div className="tab-inner-content">
-                  {message || "Loading data..."}
+                  {users.length === 0 ? (
+                    <p>Loading data...</p>
+                  ) : (
+                    <ul className="user-list">
+                      {users.map((user, index) => (
+                        <li key={user.id || index} style={{ marginBottom: '10px' }}>
+                          <strong>{`${user.name} ${user.surname}` || "Unknown User"}</strong>
+                          {user.email && `: ${user.email}`}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+
                 </div>
               )}
             </div>
