@@ -8,6 +8,7 @@ function App() {
   const [user, setUser] = useState(null);
   const [users, setUsers] = useState([]);
   const [page, setPage] = useState("welcome");
+  const [selectedExperiment, setSelectedExperiment] = useState(null);
 
   useEffect(() => {
     if (!user) return;
@@ -25,6 +26,17 @@ function App() {
   const handleLogout = () => {
     setUser(null);
     setPage("welcome");
+    setSelectedExperiment(null);
+  };
+
+  const handleStartSearching = () => {
+    setSelectedExperiment(null);
+    setPage("dashboard");
+  };
+
+  const handleSelectExperiment = (experiment) => {
+    setSelectedExperiment(experiment);
+    setPage("dashboard");
   };
 
   if (!user) {
@@ -47,17 +59,18 @@ function App() {
         currentUser={user}
         onLogout={handleLogout}
         onProfileClick={() => setPage("profile")}
-        onStartSearching={() => setPage("dashboard")}
+        onStartSearching={handleStartSearching}
       />
     );
   }
 
   return (
     <Dashboard
-      users={users}
+      experiment={selectedExperiment}
       currentUser={user}
       onLogout={handleLogout}
       onProfileClick={() => setPage("profile")}
+      onBack={() => setPage("welcome")}
     />
   );
 }

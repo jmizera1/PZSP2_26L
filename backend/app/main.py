@@ -1,4 +1,5 @@
 from fastapi import Depends, FastAPI, HTTPException
+from sqlalchemy import and_
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
@@ -108,3 +109,38 @@ def get_results(experiment_id: int, db: Session = Depends(get_db)):
     return db.query(models.Result).filter(
         models.Result.experiment_experiment_id == experiment_id
     ).all()
+
+
+@app.get("/experiments/{experiment_id}/metrics")
+def get_experiment_metrics(experiment_id: int, db: Session = Depends(get_db)):
+    """Return all experiment_metrics for a given experiment, joined with metric info."""
+    results = db.query(models.Result).filter(
+        models.Result.experiment_experiment_id == experiment_id
+    ).all()
+    result_ids = [r.result_id for r in results]
+    if not result_ids:
+        return []
+    rows = (
+        db.query(models.ExperimentMetric, models.Metric)
+        .join(models.Metric, models.ExperimentMetric.metric_metric_id == models.Metric.metric_id)
+        .filter(models.ExperimentMetric.result_result_id.in_(result_ids))
+        .all()
+    )
+    return [
+        {
+            "experiment_metric_id": em.experiment_metric_id,
+            "value": em.value,
+            "result_result_id": em.result_result_id,
+            "metric_name": m.name,
+            "metric_unit": m.unit,
+        }
+        for em, m in rows
+    ]
+
+
+@app.get("/users/{user_id}")
+def get_user(user_id: int, db: Session = Depends(get_db)):
+    user = db.query(models.User).filter(models.User.user_id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
