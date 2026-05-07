@@ -1,0 +1,178 @@
+/* Profile page — same design tokens as Dashboard */
+
+.profile-page {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+
+/* Reuse sidebar + header from Dashboard, profile-specific content below */
+
+.profile-content {
+    padding: 40px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.profile-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-family: var(--font-family);
+    cursor: pointer;
+    padding: 0;
+    margin-bottom: 28px;
+    transition: color 0.2s;
+}
+
+.profile-back:hover {
+    color: var(--text-primary);
+}
+
+.profile-back svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Profile card */
+.profile-card {
+    max-width: 560px;
+    background-color: var(--bg-color-sidebar);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 40px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+}
+
+.profile-card-header {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.profile-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    border: 2px solid var(--border-color);
+}
+
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-name-block h1 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+}
+
+.profile-name-block p {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+}
+
+/* Info rows */
+.profile-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.profile-row:last-child {
+    border-bottom: none;
+}
+
+.profile-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
+.profile-value {
+    font-size: 0.92rem;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+/* Action buttons */
+.profile-actions {
+    display: flex;
+    gap: 16px;
+    margin-top: 32px;
+}
+
+.profile-action-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 20px;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    font-family: var(--font-family);
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+    border: none;
+}
+
+.profile-action-btn:hover {
+    transform: translateY(-1px);
+}
+
+.profile-action-btn:active {
+    transform: translateY(0);
+}
+
+.profile-action-btn svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+/* Upload button — gradient accent */
+.btn-upload {
+    background: linear-gradient(135deg, #4da3ff 0%, #6366f1 100%);
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(77, 163, 255, 0.25);
+}
+
+.btn-upload:hover {
+    box-shadow: 0 6px 24px rgba(77, 163, 255, 0.35);
+}
+
+/* Show research button — outlined */
+.btn-research {
+    background-color: transparent;
+    color: var(--text-blue);
+    border: 1px solid var(--border-color);
+}
+
+.btn-research:hover {
+    background-color: rgba(77, 163, 255, 0.06);
+    border-color: rgba(77, 163, 255, 0.3);
+    box-shadow: 0 4px 16px rgba(77, 163, 255, 0.1);
+}

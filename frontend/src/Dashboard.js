@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import './Dashboard.css';
 
-const Dashboard = ({ users = [], currentUser, onLogout }) => {
+const Dashboard = ({ users = [], currentUser, onLogout, onProfileClick }) => {
   const [activeTab, setActiveTab] = useState('ITEM 1');
   const tabs = ['ITEM 1', 'ITEM 2', 'ITEM 3', 'ITEM 4'];
+
+  const isLoggedIn = currentUser && !currentUser.guest;
 
   return (
     <div className="dashboard-container">
@@ -44,9 +46,13 @@ const Dashboard = ({ users = [], currentUser, onLogout }) => {
           </div>
 
           <div className="user-actions">
-            <div className="user-profile">
+            <div
+              className={`user-profile ${isLoggedIn ? 'clickable' : ''}`}
+              onClick={isLoggedIn ? onProfileClick : undefined}
+              title={isLoggedIn ? 'View profile' : undefined}
+            >
               <div className="avatar">
-                {currentUser && !currentUser.guest ? (
+                {isLoggedIn ? (
                   <img src="https://i.pravatar.cc/150?img=11" alt={`${currentUser.name} ${currentUser.surname}`} />
                 ) : (
                   <svg className="avatar-placeholder" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -55,7 +61,7 @@ const Dashboard = ({ users = [], currentUser, onLogout }) => {
                   </svg>
                 )}
               </div>
-              <span className="username">{currentUser && !currentUser.guest ? `${currentUser.name} ${currentUser.surname}` : 'unsigned user'}</span>
+              <span className="username">{isLoggedIn ? `${currentUser.name} ${currentUser.surname}` : 'unsigned user'}</span>
             </div>
           </div>
         </header>

@@ -161,6 +161,16 @@ body {
     cursor: pointer;
 }
 
+.user-profile.clickable:hover {
+    opacity: 0.85;
+}
+
+.user-profile.clickable:hover .username {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    color: var(--text-blue);
+}
+
 .avatar {
     width: 32px;
     height: 32px;
