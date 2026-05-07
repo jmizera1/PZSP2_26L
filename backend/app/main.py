@@ -1,5 +1,6 @@
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from . import models, schemas
@@ -8,6 +9,11 @@ from .db import SessionLocal, engine
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
 
 app.add_middleware(
     CORSMiddleware,
@@ -29,6 +35,18 @@ def get_db():
 @app.get("/")
 def root():
     return {"message": "API running"}
+
+
+@app.post("/login")
+def login(creds: LoginRequest, db: Session = Depends(get_db)):
+    user = (
+        db.query(models.User)
+        .filter(models.User.email == creds.email)
+        .first()
+    )
+    if not user or user.password != creds.password:
+        raise HTTPException(status_code=401, detail="Invalid email or password")
+    return user
 
 
 @app.get("/users")

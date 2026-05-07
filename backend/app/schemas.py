@@ -4,11 +4,15 @@ from pydantic import BaseModel
 class UserBase(BaseModel):
     name: str
     surname: str
+    org: str
     email: str
+    password: str
+    user_auth_user_auth_id: int
+    user_type_user_type_id: int
 
 
 class UserCreate(UserBase):
-    pass
+    user_id: int
 
 
 class User(UserBase):
@@ -19,9 +23,11 @@ class User(UserBase):
 
 
 class ExperimentCreate(BaseModel):
+    experiment_id: int
     name: str
     description: str
     user_id: int
+    user_id1: int
 
 
 class Experiment(BaseModel):

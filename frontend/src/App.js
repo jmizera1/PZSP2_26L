@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
 import Dashboard from "./Dashboard";
+import Login from "./Login";
 
 function App() {
+  const [user, setUser] = useState(null);
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    const apiUrl = process.env.REACT_APP_API_URL || "http://localhost:8000";
+    if (!user) return;
+
+    const apiUrl = process.env.REACT_APP_API_URL || "http://localhost:8001";
 
     fetch(`${apiUrl}/users`)
       .then(res => res.json())
@@ -13,9 +17,13 @@ function App() {
         setUsers(data);
       })
       .catch(err => console.error("Error fetching users:", err));
-  }, []);
+  }, [user]);
 
-  return <Dashboard users={users} />;
+  if (!user) {
+    return <Login onLogin={setUser} />;
+  }
+
+  return <Dashboard users={users} currentUser={user} onLogout={() => setUser(null)} />;
 }
 
 export default App;

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './Dashboard.css';
 
-const Dashboard = ({ users = [] }) => {
+const Dashboard = ({ users = [], currentUser, onLogout }) => {
   const [activeTab, setActiveTab] = useState('ITEM 1');
   const tabs = ['ITEM 1', 'ITEM 2', 'ITEM 3', 'ITEM 4'];
 
@@ -23,12 +23,13 @@ const Dashboard = ({ users = [] }) => {
           <div className="sidebar-section"><p>some text</p></div>
         </div>
 
-        <div className="sidebar-footer">
+        <div className="sidebar-footer" onClick={onLogout}>
           <svg className="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="3"></circle>
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
           </svg>
-          <span>SETTINGS</span>
+          <span>LOG OUT</span>
         </div>
       </aside>
 
@@ -47,7 +48,7 @@ const Dashboard = ({ users = [] }) => {
               <div className="avatar">
                 <img src="https://i.pravatar.cc/150?img=11" alt="John Doe" />
               </div>
-              <span className="username">John Doe</span>
+              <span className="username">{currentUser ? `${currentUser.name} ${currentUser.surname}` : 'User'}</span>
             </div>
           </div>
         </header>
