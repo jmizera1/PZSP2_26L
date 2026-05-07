@@ -142,6 +142,9 @@ const Login = ({ onLogin }) => {
           <span>Don't have an account? </span>
           <a href="#contact" onClick={(e) => { e.preventDefault(); setShowContact(true); }}>Contact admin</a>
         </div>
+        <div className="login-footer">
+          <a href="#guest" onClick={(e) => { e.preventDefault(); onLogin({ guest: true }); }}>Continue without signing in</a>
+        </div>
       </div>
 
       {/* Contact Admin Modal */}

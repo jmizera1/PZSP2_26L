@@ -46,9 +46,16 @@ const Dashboard = ({ users = [], currentUser, onLogout }) => {
           <div className="user-actions">
             <div className="user-profile">
               <div className="avatar">
-                <img src="https://i.pravatar.cc/150?img=11" alt="John Doe" />
+                {currentUser && !currentUser.guest ? (
+                  <img src="https://i.pravatar.cc/150?img=11" alt={`${currentUser.name} ${currentUser.surname}`} />
+                ) : (
+                  <svg className="avatar-placeholder" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="8" r="4" />
+                    <path d="M20 21a8 8 0 1 0-16 0" />
+                  </svg>
+                )}
               </div>
-              <span className="username">{currentUser ? `${currentUser.name} ${currentUser.surname}` : 'User'}</span>
+              <span className="username">{currentUser && !currentUser.guest ? `${currentUser.name} ${currentUser.surname}` : 'unsigned user'}</span>
             </div>
           </div>
         </header>
