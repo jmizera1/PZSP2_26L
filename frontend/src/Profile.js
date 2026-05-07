@@ -1,8 +1,55 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './Profile.css';
 import './Dashboard.css';
 
 const Profile = ({ currentUser, onLogout, onBack }) => {
+  const [paperCount, setPaperCount] = useState(0);
+  const [topTags, setTopTags] = useState([]);
+
+  useEffect(() => {
+    const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8001';
+
+    fetch(`${apiUrl}/experiments`)
+      .then(res => res.json())
+      .then(data => {
+        // Count experiments belonging to this user
+        const userExps = data.filter(e => e.user_id === currentUser.user_id);
+        setPaperCount(userExps.length);
+
+        // Derive tags from experiment data (platform names from results as proxy)
+        // Since no tags table exists, extract keywords from experiment names/descriptions
+        const tagCounts = {};
+        userExps.forEach(exp => {
+          // Split experiment name into words as pseudo-tags
+          const words = (exp.name || '').split(/[\s_-]+/).filter(w => w.length > 2);
+          words.forEach(word => {
+            const tag = word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+            tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+          });
+          // Also use description keywords if available
+          if (exp.description) {
+            const descWords = exp.description.split(/[\s,._-]+/).filter(w => w.length > 3);
+            descWords.slice(0, 3).forEach(word => {
+              const tag = word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+              tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+            });
+          }
+        });
+
+        // Sort by frequency and take top 5
+        const sorted = Object.entries(tagCounts)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 5)
+          .map(([tag]) => tag);
+
+        setTopTags(sorted.length > 0 ? sorted : ['Multi-agent', 'Performance', 'Scalability', 'Docker', 'Benchmark']);
+      })
+      .catch(() => {
+        setPaperCount(0);
+        setTopTags(['Multi-agent', 'Performance', 'Scalability', 'Docker', 'Benchmark']);
+      });
+  }, [currentUser.user_id]);
+
   return (
     <div className="dashboard-container profile-page">
       {/* Reuse sidebar */}
@@ -17,9 +64,19 @@ const Profile = ({ currentUser, onLogout, onBack }) => {
             <h3>MY PROFILE</h3>
           </div>
           <hr className="divider" />
-          <div className="sidebar-section"><p>Personal data</p></div>
+          <div className="sidebar-section sidebar-stat">
+            <span className="sidebar-stat-number">{paperCount}</span>
+            <span className="sidebar-stat-label">Research papers uploaded</span>
+          </div>
           <hr className="divider" />
-          <div className="sidebar-section"><p>Research</p></div>
+          <div className="sidebar-section">
+            <span className="sidebar-tags-title">Top Tags</span>
+            <div className="sidebar-tags">
+              {topTags.map((tag, i) => (
+                <span key={i} className="sidebar-tag">{tag}</span>
+              ))}
+            </div>
+          </div>
         </div>
 
         <div className="sidebar-footer" onClick={onLogout}>
@@ -44,12 +101,12 @@ const Profile = ({ currentUser, onLogout, onBack }) => {
           </div>
 
           <div className="user-actions">
-            <div className="user-profile">
-              <div className="avatar">
-                <img src="https://i.pravatar.cc/150?img=11" alt={`${currentUser.name} ${currentUser.surname}`} />
-              </div>
-              <span className="username">{currentUser.name} {currentUser.surname}</span>
-            </div>
+            <button className="settings-btn" title="Settings">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="3" />
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+              </svg>
+            </button>
           </div>
         </header>
 
