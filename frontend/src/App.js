@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import Dashboard from "./Dashboard";
 import Login from "./Login";
 import Profile from "./Profile";
+import Welcome from "./Welcome";
 
 function App() {
   const [user, setUser] = useState(null);
   const [users, setUsers] = useState([]);
-  const [page, setPage] = useState("dashboard");
+  const [page, setPage] = useState("welcome");
 
   useEffect(() => {
     if (!user) return;
@@ -23,7 +24,7 @@ function App() {
 
   const handleLogout = () => {
     setUser(null);
-    setPage("dashboard");
+    setPage("welcome");
   };
 
   if (!user) {
@@ -36,6 +37,17 @@ function App() {
         currentUser={user}
         onLogout={handleLogout}
         onBack={() => setPage("dashboard")}
+      />
+    );
+  }
+
+  if (page === "welcome") {
+    return (
+      <Welcome
+        currentUser={user}
+        onLogout={handleLogout}
+        onProfileClick={() => setPage("profile")}
+        onStartSearching={() => setPage("dashboard")}
       />
     );
   }
