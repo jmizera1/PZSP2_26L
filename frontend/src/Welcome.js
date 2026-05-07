@@ -3,6 +3,9 @@ import './Dashboard.css';
 import './Welcome.css';
 
 const Welcome = ({ currentUser, onLogout, onProfileClick, onStartSearching }) => {
+  const handleSignInToUpload = () => {
+    onLogout();
+  };
   const isLoggedIn = currentUser && !currentUser.guest;
 
   return (
@@ -12,19 +15,33 @@ const Welcome = ({ currentUser, onLogout, onProfileClick, onStartSearching }) =>
           <h2>SCREEN PROJECT</h2>
         </div>
 
-        <div className="sidebar-content">
-          <div className="sidebar-section">
-            <span className="subtitle">SCREEN TITLE:</span>
-            <h3>WELCOME</h3>
+        <div className="sidebar-content sidebar-ad">
+          <div className="ad-badge">PARTNER</div>
+          <div className="ad-logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M2 20h20" />
+              <path d="M5 20V8l7-5 7 5v12" />
+              <path d="M9 20v-6h6v6" />
+              <path d="M9 11h.01" />
+              <path d="M15 11h.01" />
+            </svg>
           </div>
+          <h3 className="ad-title">Warsaw University<br/>of Technology</h3>
+          <p className="ad-subtitle">Politechnika Warszawska</p>
           <hr className="divider" />
-          <div className="sidebar-section">
-            <p>Multi-agent research platform</p>
-          </div>
-          <hr className="divider" />
-          <div className="sidebar-section">
-            <p>Explore & analyse experiments</p>
-          </div>
+          <p className="ad-body">
+            One of Poland's leading technical universities,
+            driving innovation in engineering, computer science,
+            and multi-agent systems research since 1826.
+          </p>
+          <a
+            href="https://www.pw.edu.pl"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ad-link"
+          >
+            Visit pw.edu.pl →
+          </a>
         </div>
 
         <div className="sidebar-footer" onClick={onLogout}>
@@ -111,17 +128,30 @@ const Welcome = ({ currentUser, onLogout, onProfileClick, onStartSearching }) =>
 
           {/* Feature cards */}
           <div className="welcome-features">
-            <div className="feature-card">
-              <div className="feature-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                  <polyline points="17 8 12 3 7 8" />
-                  <line x1="12" y1="3" x2="12" y2="15" />
-                </svg>
+            {isLoggedIn ? (
+              <div className="feature-card">
+                <div className="feature-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="17 8 12 3 7 8" />
+                    <line x1="12" y1="3" x2="12" y2="15" />
+                  </svg>
+                </div>
+                <h3>Upload Research</h3>
+                <p>Share your experiments and results with the community.</p>
               </div>
-              <h3>Upload Research</h3>
-              <p>Share your experiments and results with the community.</p>
-            </div>
+            ) : (
+              <div className="feature-card feature-card-cta" onClick={handleSignInToUpload}>
+                <div className="feature-icon feature-icon-lock">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                  </svg>
+                </div>
+                <h3>Sign In to Upload</h3>
+                <p>Log in with your account to upload and share your research.</p>
+              </div>
+            )}
 
             <div className="feature-card">
               <div className="feature-icon">
