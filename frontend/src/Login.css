@@ -271,3 +271,176 @@
 .login-footer a:hover {
     opacity: 0.8;
 }
+
+/* ─── Contact Admin Modal ─── */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(6px);
+    animation: overlay-in 0.25s ease-out;
+}
+
+@keyframes overlay-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.modal-card {
+    position: relative;
+    width: 380px;
+    background-color: var(--bg-color-sidebar);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 40px 36px 36px;
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.45);
+    animation: card-enter 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.modal-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-secondary);
+    padding: 4px;
+    display: flex;
+    transition: color 0.2s;
+}
+
+.modal-close:hover {
+    color: var(--text-primary);
+}
+
+.modal-close svg {
+    width: 18px;
+    height: 18px;
+}
+
+.modal-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4da3ff 0%, #6366f1 100%);
+    margin: 0 auto 18px;
+}
+
+.modal-icon svg {
+    width: 24px;
+    height: 24px;
+    color: #fff;
+}
+
+.modal-title {
+    text-align: center;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 28px;
+}
+
+.modal-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.info-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.8px;
+}
+
+.info-value {
+    font-size: 0.92rem;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+/* Clickable email button */
+.email-copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: 4px 8px;
+    cursor: pointer;
+    color: var(--text-blue);
+    font-size: 0.92rem;
+    font-weight: 500;
+    font-family: var(--font-family);
+    transition: background-color 0.2s, border-color 0.2s;
+    position: relative;
+}
+
+.email-copy-btn:hover {
+    background-color: rgba(77, 163, 255, 0.08);
+    border-color: rgba(77, 163, 255, 0.2);
+}
+
+.copy-icon {
+    width: 14px;
+    height: 14px;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.email-copy-btn:hover .copy-icon {
+    opacity: 1;
+}
+
+.copied-tooltip {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #22c55e;
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+    animation: tooltip-pop 0.25s ease-out;
+    pointer-events: none;
+}
+
+.copied-tooltip::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #22c55e;
+}
+
+@keyframes tooltip-pop {
+    from { opacity: 0; transform: translateX(-50%) translateY(4px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}

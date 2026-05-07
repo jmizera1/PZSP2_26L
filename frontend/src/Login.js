@@ -7,6 +7,15 @@ const Login = ({ onLogin }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showContact, setShowContact] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyEmail = () => {
+    navigator.clipboard.writeText('kurdybelskiadam@gmail.com').then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -131,9 +140,54 @@ const Login = ({ onLogin }) => {
 
         <div className="login-footer">
           <span>Don't have an account? </span>
-          <a href="#signup">Contact admin</a>
+          <a href="#contact" onClick={(e) => { e.preventDefault(); setShowContact(true); }}>Contact admin</a>
         </div>
       </div>
+
+      {/* Contact Admin Modal */}
+      {showContact && (
+        <div className="modal-overlay" onClick={() => setShowContact(false)}>
+          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => setShowContact(false)} aria-label="Close">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+
+            <div className="modal-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+            </div>
+
+            <h2 className="modal-title">Contact Administrator</h2>
+
+            <div className="modal-info">
+              <div className="info-row">
+                <span className="info-label">NAME</span>
+                <span className="info-value">Adam</span>
+              </div>
+              <div className="info-row">
+                <span className="info-label">SURNAME</span>
+                <span className="info-value">Kurdybelski</span>
+              </div>
+              <div className="info-row">
+                <span className="info-label">EMAIL</span>
+                <button className="email-copy-btn" onClick={handleCopyEmail}>
+                  <span>kurdybelskiadam@gmail.com</span>
+                  <svg className="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                  </svg>
+                  {copied && <span className="copied-tooltip">Copied!</span>}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
