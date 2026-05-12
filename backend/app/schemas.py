@@ -79,3 +79,20 @@ class ExperimentMetric(ExperimentMetricBase):
 
     class Config:
         from_attributes = True
+
+class FullExperimentCreate(BaseModel):
+    name: str
+    description: str
+    platform_name: str
+    workload: str
+    number_of_agents: int
+    number_of_repetitions: int
+    number_of_containers: int
+    message_size: int
+    group_size: int
+    ram: float
+    vcpu: str
+    throughput: float
+    latency: float
+    cpu_usage: float
+    user_id: int

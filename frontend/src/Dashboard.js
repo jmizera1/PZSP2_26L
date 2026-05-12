@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './Dashboard.css';
+import AddExperimentModal from './AddExperimentModal';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8001';
 
@@ -83,6 +84,7 @@ const SimpleBarChart = ({ data, label, unit }) => {
 const Dashboard = ({ experiment = null, currentUser, onLogout, onProfileClick, onBack }) => {
   const [activeTab, setActiveTab] = useState('Results');
   const tabs = ['Results', 'Plots', 'More Information'];
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const isLoggedIn = currentUser && !currentUser.guest;
 
@@ -322,6 +324,20 @@ const Dashboard = ({ experiment = null, currentUser, onLogout, onProfileClick, o
           </div>
 
           <div className="user-actions">
+            {isLoggedIn && (
+              <button 
+                className="profile-action-btn btn-upload" 
+                onClick={() => setIsModalOpen(true)}
+                style={{ padding: '8px 16px', fontSize: '0.85rem' }}
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '16px', height: '16px', marginRight: '6px', verticalAlign: 'middle' }}>
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="17 8 12 3 7 8" />
+                  <line x1="12" y1="3" x2="12" y2="15" />
+                </svg>
+                Upload new research
+              </button>
+            )}
             <div
               className={`user-profile ${isLoggedIn ? 'clickable' : ''}`}
               onClick={isLoggedIn ? onProfileClick : undefined}
@@ -377,6 +393,16 @@ const Dashboard = ({ experiment = null, currentUser, onLogout, onProfileClick, o
           </div>
         </main>
       </div>
+
+      <AddExperimentModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        currentUser={currentUser} 
+        onExperimentAdded={() => {
+            console.log('Experiment added');
+            // In a real app we might want to refresh the experiments list here
+        }}
+      />
     </div>
   );
 };

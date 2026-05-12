@@ -144,3 +144,84 @@ def get_user(user_id: int, db: Session = Depends(get_db)):
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
+
+import random
+
+@app.post("/experiments/full")
+def create_full_experiment(data: schemas.FullExperimentCreate, db: Session = Depends(get_db)):
+    exp_id = random.randint(1000, 9999999)
+    exp = models.Experiment(
+        experiment_id=exp_id,
+        name=data.name,
+        description=data.description,
+        user_id=data.user_id,
+        user_id1=data.user_id
+    )
+    db.add(exp)
+    
+    res_id = random.randint(1000, 9999999)
+    res = models.Result(
+        result_id=res_id,
+        experiment_experiment_id=exp_id,
+        number_of_containers=data.number_of_containers,
+        platform_name=data.platform_name,
+        workload=data.workload,
+        number_of_agents=data.number_of_agents,
+        number_of_repetitions=data.number_of_repetitions,
+        message_size=data.message_size,
+        group_size=data.group_size,
+        ram=data.ram,
+        vcpu=data.vcpu
+    )
+    db.add(res)
+    
+    def get_or_create_metric(name: str, unit_name: str):
+        unit = db.query(models.Unit).filter(models.Unit.unit == unit_name).first()
+        if not unit:
+            unit = models.Unit(unit_id=random.randint(1000, 9999999), unit=unit_name)
+            db.add(unit)
+            db.commit()
+            db.refresh(unit)
+        
+        metric = db.query(models.Metric).filter(models.Metric.name == name).first()
+        if not metric:
+            metric = models.Metric(
+                metric_id=random.randint(1000, 9999999), 
+                name=name, 
+                unit=unit_name, 
+                unit_unit_id=unit.unit_id
+            )
+            db.add(metric)
+            db.commit()
+            db.refresh(metric)
+        return metric
+
+    m_throughput = get_or_create_metric("Throughput", "msg/s")
+    m_latency = get_or_create_metric("Latency", "ms")
+    m_cpu = get_or_create_metric("CPU Usage", "%")
+    
+    em1 = models.ExperimentMetric(
+        experiment_metric_id=random.randint(1000, 9999999),
+        value=data.throughput,
+        id1=1,
+        metric_metric_id=m_throughput.metric_id,
+        result_result_id=res_id
+    )
+    em2 = models.ExperimentMetric(
+        experiment_metric_id=random.randint(1000, 9999999),
+        value=data.latency,
+        id1=2,
+        metric_metric_id=m_latency.metric_id,
+        result_result_id=res_id
+    )
+    em3 = models.ExperimentMetric(
+        experiment_metric_id=random.randint(1000, 9999999),
+        value=data.cpu_usage,
+        id1=3,
+        metric_metric_id=m_cpu.metric_id,
+        result_result_id=res_id
+    )
+    db.add_all([em1, em2, em3])
+    db.commit()
+    
+    return {"status": "success", "experiment_id": exp_id}
