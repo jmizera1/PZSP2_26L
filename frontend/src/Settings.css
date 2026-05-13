@@ -1,0 +1,338 @@
+/* Settings page styles */
+
+.settings-content {
+    padding: 40px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.settings-page-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 32px;
+}
+
+/* Sidebar nav */
+.settings-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.settings-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.settings-nav-item:hover {
+    color: var(--text-primary);
+    background-color: var(--bg-color-input);
+}
+
+.settings-nav-item.active {
+    color: var(--text-blue);
+    background-color: rgba(77, 163, 255, 0.08);
+}
+
+.settings-nav-item svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+/* Sections */
+.settings-section {
+    margin-bottom: 32px;
+}
+
+.settings-section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.settings-section-header svg {
+    width: 20px;
+    height: 20px;
+    color: var(--text-blue);
+}
+
+.settings-section-header h2 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* Card */
+.settings-card {
+    background-color: var(--bg-color-sidebar);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.settings-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.15s;
+}
+
+.settings-row:last-child {
+    border-bottom: none;
+}
+
+.settings-row:hover {
+    background-color: rgba(77, 163, 255, 0.03);
+}
+
+.settings-row-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex: 1;
+    margin-right: 24px;
+}
+
+.settings-row-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.settings-row-desc {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+/* Toggle switch */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    inset: 0;
+    background-color: var(--bg-color-input);
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    transition: all 0.3s;
+}
+
+.toggle-slider::before {
+    content: '';
+    position: absolute;
+    height: 18px;
+    width: 18px;
+    left: 2px;
+    bottom: 2px;
+    background-color: var(--text-secondary);
+    border-radius: 50%;
+    transition: all 0.3s;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background: linear-gradient(135deg, #4da3ff 0%, #6366f1 100%);
+    border-color: transparent;
+}
+
+.toggle-switch input:checked + .toggle-slider::before {
+    transform: translateX(20px);
+    background-color: #fff;
+}
+
+/* Theme switcher */
+.theme-switcher {
+    display: flex;
+    gap: 8px;
+}
+
+.theme-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-color-input);
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    font-weight: 600;
+    font-family: var(--font-family);
+    cursor: pointer;
+    transition: all 0.25s;
+}
+
+.theme-option svg {
+    width: 16px;
+    height: 16px;
+}
+
+.theme-option:hover {
+    color: var(--text-primary);
+    border-color: var(--text-blue);
+}
+
+.theme-option.active {
+    background: linear-gradient(135deg, #4da3ff 0%, #6366f1 100%);
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 4px 16px rgba(77, 163, 255, 0.3);
+}
+
+/* Select dropdown */
+.settings-select {
+    padding: 10px 16px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-color-input);
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    font-family: var(--font-family);
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    min-width: 140px;
+}
+
+.settings-select:focus {
+    border-color: var(--text-blue);
+}
+
+.settings-select option {
+    background-color: var(--bg-color-sidebar);
+    color: var(--text-primary);
+}
+
+/* Save button */
+.settings-save-area {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-color);
+}
+
+.settings-save-btn {
+    padding: 12px 36px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #4da3ff 0%, #6366f1 100%);
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: var(--font-family);
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(77, 163, 255, 0.25);
+}
+
+.settings-save-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(77, 163, 255, 0.4);
+}
+
+.settings-save-btn:active {
+    transform: translateY(0);
+}
+
+/* Toast */
+.settings-toast {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    margin-bottom: 24px;
+    border-radius: 8px;
+    background-color: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    color: #22c55e;
+    font-size: 0.85rem;
+    font-weight: 500;
+    animation: toast-in 0.3s ease-out;
+}
+
+.settings-toast svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+@keyframes toast-in {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Sky Blue / Light theme overrides ─── */
+
+[data-theme="light"] {
+    --bg-color-main: #f0f6ff;
+    --bg-color-sidebar: #ffffff;
+    --bg-color-header: #ffffff;
+    --bg-color-input: #e8f0fe;
+    --bg-color-tab-active: #ffffff;
+    --border-color: #c9d8ec;
+    --text-primary: #1a2332;
+    --text-secondary: #5a6e85;
+    --text-blue: #2a7de1;
+}
+
+[data-theme="light"] .login-page {
+    background-color: #e4effc;
+}
+
+[data-theme="light"] .login-page::before {
+    background: #7cb8ff;
+}
+
+[data-theme="light"] .login-page::after {
+    background: #93a4f8;
+}
+
+[data-theme="light"] .login-card,
+[data-theme="light"] .modal-card {
+    box-shadow: 0 8px 32px rgba(42, 125, 225, 0.12);
+}
+
+[data-theme="light"] .toggle-slider::before {
+    background-color: #8ca0b8;
+}
+
+[data-theme="light"] .settings-select option {
+    background-color: #ffffff;
+}
+
+[data-theme="light"] .chart-bar {
+    background: linear-gradient(180deg, #2a7de1 0%, #5b8def 100%);
+}
+
+[data-theme="light"] .results-table th {
+    background-color: #dce7f5;
+}
+
+[data-theme="light"] .results-table tbody tr:hover {
+    background-color: rgba(42, 125, 225, 0.06);
+}
