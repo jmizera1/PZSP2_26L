@@ -16,6 +16,7 @@ class LoginRequest(BaseModel):
     email: str
     password: str
 
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -40,11 +41,7 @@ def root():
 
 @app.post("/login")
 def login(creds: LoginRequest, db: Session = Depends(get_db)):
-    user = (
-        db.query(models.User)
-        .filter(models.User.email == creds.email)
-        .first()
-    )
+    user = db.query(models.User).filter(models.User.email == creds.email).first()
     if not user or user.password != creds.password:
         raise HTTPException(status_code=401, detail="Invalid email or password")
     return user
@@ -99,30 +96,39 @@ def get_experiments(db: Session = Depends(get_db)):
 
 @app.get("/experiments/{experiment_id}")
 def get_experiment(experiment_id: int, db: Session = Depends(get_db)):
-    return db.query(models.Experiment).filter(
-        models.Experiment.experiment_id == experiment_id
-    ).first()
+    return (
+        db.query(models.Experiment)
+        .filter(models.Experiment.experiment_id == experiment_id)
+        .first()
+    )
 
 
 @app.get("/experiments/{experiment_id}/results")
 def get_results(experiment_id: int, db: Session = Depends(get_db)):
-    return db.query(models.Result).filter(
-        models.Result.experiment_experiment_id == experiment_id
-    ).all()
+    return (
+        db.query(models.Result)
+        .filter(models.Result.experiment_experiment_id == experiment_id)
+        .all()
+    )
 
 
 @app.get("/experiments/{experiment_id}/metrics")
 def get_experiment_metrics(experiment_id: int, db: Session = Depends(get_db)):
     """Return all experiment_metrics for a given experiment, joined with metric info."""
-    results = db.query(models.Result).filter(
-        models.Result.experiment_experiment_id == experiment_id
-    ).all()
+    results = (
+        db.query(models.Result)
+        .filter(models.Result.experiment_experiment_id == experiment_id)
+        .all()
+    )
     result_ids = [r.result_id for r in results]
     if not result_ids:
         return []
     rows = (
         db.query(models.ExperimentMetric, models.Metric)
-        .join(models.Metric, models.ExperimentMetric.metric_metric_id == models.Metric.metric_id)
+        .join(
+            models.Metric,
+            models.ExperimentMetric.metric_metric_id == models.Metric.metric_id,
+        )
         .filter(models.ExperimentMetric.result_result_id.in_(result_ids))
         .all()
     )
@@ -145,20 +151,24 @@ def get_user(user_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
+
 import random
 
+
 @app.post("/experiments/full")
-def create_full_experiment(data: schemas.FullExperimentCreate, db: Session = Depends(get_db)):
+def create_full_experiment(
+    data: schemas.FullExperimentCreate, db: Session = Depends(get_db)
+):
     exp_id = random.randint(1000, 9999999)
     exp = models.Experiment(
         experiment_id=exp_id,
         name=data.name,
         description=data.description,
         user_id=data.user_id,
-        user_id1=data.user_id
+        user_id1=data.user_id,
     )
     db.add(exp)
-    
+
     res_id = random.randint(1000, 9999999)
     res = models.Result(
         result_id=res_id,
@@ -171,10 +181,10 @@ def create_full_experiment(data: schemas.FullExperimentCreate, db: Session = Dep
         message_size=data.message_size,
         group_size=data.group_size,
         ram=data.ram,
-        vcpu=data.vcpu
+        vcpu=data.vcpu,
     )
     db.add(res)
-    
+
     def get_or_create_metric(name: str, unit_name: str):
         unit = db.query(models.Unit).filter(models.Unit.unit == unit_name).first()
         if not unit:
@@ -182,14 +192,14 @@ def create_full_experiment(data: schemas.FullExperimentCreate, db: Session = Dep
             db.add(unit)
             db.commit()
             db.refresh(unit)
-        
+
         metric = db.query(models.Metric).filter(models.Metric.name == name).first()
         if not metric:
             metric = models.Metric(
-                metric_id=random.randint(1000, 9999999), 
-                name=name, 
-                unit=unit_name, 
-                unit_unit_id=unit.unit_id
+                metric_id=random.randint(1000, 9999999),
+                name=name,
+                unit=unit_name,
+                unit_unit_id=unit.unit_id,
             )
             db.add(metric)
             db.commit()
@@ -199,29 +209,29 @@ def create_full_experiment(data: schemas.FullExperimentCreate, db: Session = Dep
     m_throughput = get_or_create_metric("Throughput", "msg/s")
     m_latency = get_or_create_metric("Latency", "ms")
     m_cpu = get_or_create_metric("CPU Usage", "%")
-    
+
     em1 = models.ExperimentMetric(
         experiment_metric_id=random.randint(1000, 9999999),
         value=data.throughput,
         id1=1,
         metric_metric_id=m_throughput.metric_id,
-        result_result_id=res_id
+        result_result_id=res_id,
     )
     em2 = models.ExperimentMetric(
         experiment_metric_id=random.randint(1000, 9999999),
         value=data.latency,
         id1=2,
         metric_metric_id=m_latency.metric_id,
-        result_result_id=res_id
+        result_result_id=res_id,
     )
     em3 = models.ExperimentMetric(
         experiment_metric_id=random.randint(1000, 9999999),
         value=data.cpu_usage,
         id1=3,
         metric_metric_id=m_cpu.metric_id,
-        result_result_id=res_id
+        result_result_id=res_id,
     )
     db.add_all([em1, em2, em3])
     db.commit()
-    
+
     return {"status": "success", "experiment_id": exp_id}

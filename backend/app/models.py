@@ -27,8 +27,12 @@ class User(Base):
     name = Column(String(255), nullable=False)
     surname = Column(String(255), nullable=False)
     org = Column(String(255), nullable=False)
-    user_auth_user_auth_id = Column(Integer, ForeignKey("user_auth.user_auth_id"), nullable=False)
-    user_type_user_type_id = Column(Integer, ForeignKey("user_type.user_type_id"), nullable=False)
+    user_auth_user_auth_id = Column(
+        Integer, ForeignKey("user_auth.user_auth_id"), nullable=False
+    )
+    user_type_user_type_id = Column(
+        Integer, ForeignKey("user_type.user_type_id"), nullable=False
+    )
     email = Column(String(255), nullable=False)
     password = Column(String(255), nullable=False)
 
@@ -57,7 +61,9 @@ class Result(Base):
     __tablename__ = "result"
 
     result_id = Column(Integer, primary_key=True)
-    experiment_experiment_id = Column(Integer, ForeignKey("experiment.experiment_id"), nullable=False)
+    experiment_experiment_id = Column(
+        Integer, ForeignKey("experiment.experiment_id"), nullable=False
+    )
     number_of_containers = Column(Integer)
     platform_name = Column(String(255))
     workload = Column(String(255))

@@ -80,6 +80,7 @@ class ExperimentMetric(ExperimentMetricBase):
     class Config:
         from_attributes = True
 
+
 class FullExperimentCreate(BaseModel):
     name: str
     description: str
