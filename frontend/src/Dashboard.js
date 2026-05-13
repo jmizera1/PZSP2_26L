@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './Dashboard.css';
-import './Dashboard.css';
+
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8001';
 
 /* ─── Example / default data shown when no experiment is selected ─── */

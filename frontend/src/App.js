@@ -5,10 +5,10 @@ import Profile from "./Profile";
 import Welcome from "./Welcome";
 import Settings from "./Settings";
 import UploadResearch from "./UploadResearch";
+import SearchExperiments from "./SearchExperiments";
 
 function App() {
   const [user, setUser] = useState(null);
-  const [users, setUsers] = useState([]);
   const [page, setPage] = useState("welcome");
   const [selectedExperiment, setSelectedExperiment] = useState(null);
   const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "dark");
@@ -19,14 +19,6 @@ function App() {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
-  useEffect(() => {
-    if (!user) return;
-    const apiUrl = process.env.REACT_APP_API_URL || "http://localhost:8001";
-    fetch(`${apiUrl}/users`)
-      .then(res => res.json())
-      .then(data => setUsers(data))
-      .catch(err => console.error("Error fetching users:", err));
-  }, [user]);
 
   const handleLogout = () => {
     setUser(null);
@@ -36,6 +28,11 @@ function App() {
 
   const handleStartSearching = () => {
     setSelectedExperiment(null);
+    setPage("search");
+  };
+
+  const handleExperimentClick = (exp) => {
+    setSelectedExperiment(exp);
     setPage("dashboard");
   };
 
@@ -60,7 +57,7 @@ function App() {
       <Profile
         currentUser={user}
         onLogout={handleLogout}
-        onBack={() => setPage("dashboard")}
+        onBack={() => setPage("search")}
         onSettingsClick={() => setPage("settings")}
         onUploadClick={() => setPage("upload")}
       />
@@ -72,8 +69,34 @@ function App() {
       <UploadResearch
         currentUser={user}
         onLogout={handleLogout}
-        onBack={() => setPage("dashboard")}
-        onSuccess={() => setPage("profile")}
+        onBack={() => setPage("search")}
+        onSuccess={() => setPage("search")}
+      />
+    );
+  }
+
+  if (page === "search") {
+    return (
+      <SearchExperiments
+        currentUser={user}
+        onLogout={handleLogout}
+        onProfileClick={() => setPage("profile")}
+        onBack={() => setPage("welcome")}
+        onUploadClick={() => setPage("upload")}
+        onExperimentClick={handleExperimentClick}
+      />
+    );
+  }
+
+  if (page === "dashboard" && selectedExperiment) {
+    return (
+      <Dashboard
+        experiment={selectedExperiment}
+        currentUser={user}
+        onLogout={handleLogout}
+        onProfileClick={() => setPage("profile")}
+        onBack={() => setPage("search")}
+        onUploadClick={() => setPage("upload")}
       />
     );
   }
@@ -90,13 +113,13 @@ function App() {
     );
   }
 
+  // Fallback to welcome
   return (
-    <Dashboard
-      experiment={selectedExperiment}
+    <Welcome
       currentUser={user}
       onLogout={handleLogout}
       onProfileClick={() => setPage("profile")}
-      onBack={() => setPage("welcome")}
+      onStartSearching={handleStartSearching}
       onUploadClick={() => setPage("upload")}
     />
   );
