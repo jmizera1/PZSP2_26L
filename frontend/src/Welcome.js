@@ -1,10 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './Dashboard.css';
 import './Welcome.css';
-import AddExperimentModal from './AddExperimentModal';
 
-const Welcome = ({ currentUser, onLogout, onProfileClick, onStartSearching }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+const Welcome = ({ currentUser, onLogout, onProfileClick, onStartSearching, onUploadClick }) => {
   const handleSignInToUpload = () => {
     onLogout();
   };
@@ -131,7 +129,7 @@ const Welcome = ({ currentUser, onLogout, onProfileClick, onStartSearching }) =>
           {/* Feature cards */}
           <div className="welcome-features">
             {isLoggedIn ? (
-              <div className="feature-card feature-card-cta" onClick={() => setIsModalOpen(true)}>
+              <div className="feature-card feature-card-cta" onClick={onUploadClick}>
                 <div className="feature-icon">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -180,15 +178,6 @@ const Welcome = ({ currentUser, onLogout, onProfileClick, onStartSearching }) =>
           </div>
         </main>
       </div>
-
-      <AddExperimentModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-        currentUser={currentUser} 
-        onExperimentAdded={() => {
-            console.log('Experiment added');
-        }}
-      />
     </div>
   );
 };

@@ -4,6 +4,7 @@ import Login from "./Login";
 import Profile from "./Profile";
 import Welcome from "./Welcome";
 import Settings from "./Settings";
+import UploadResearch from "./UploadResearch";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -61,6 +62,18 @@ function App() {
         onLogout={handleLogout}
         onBack={() => setPage("dashboard")}
         onSettingsClick={() => setPage("settings")}
+        onUploadClick={() => setPage("upload")}
+      />
+    );
+  }
+
+  if (page === "upload" && !user.guest) {
+    return (
+      <UploadResearch
+        currentUser={user}
+        onLogout={handleLogout}
+        onBack={() => setPage("dashboard")}
+        onSuccess={() => setPage("profile")}
       />
     );
   }
@@ -72,6 +85,7 @@ function App() {
         onLogout={handleLogout}
         onProfileClick={() => setPage("profile")}
         onStartSearching={handleStartSearching}
+        onUploadClick={() => setPage("upload")}
       />
     );
   }
@@ -83,6 +97,7 @@ function App() {
       onLogout={handleLogout}
       onProfileClick={() => setPage("profile")}
       onBack={() => setPage("welcome")}
+      onUploadClick={() => setPage("upload")}
     />
   );
 }

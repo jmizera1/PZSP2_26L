@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './Dashboard.css';
-import AddExperimentModal from './AddExperimentModal';
-
+import './Dashboard.css';
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8001';
 
 /* ─── Example / default data shown when no experiment is selected ─── */
@@ -81,10 +80,9 @@ const SimpleBarChart = ({ data, label, unit }) => {
 
 /* ────────────────────────────────────────────────────────────── */
 
-const Dashboard = ({ experiment = null, currentUser, onLogout, onProfileClick, onBack }) => {
+const Dashboard = ({ experiment = null, currentUser, onLogout, onProfileClick, onBack, onUploadClick }) => {
   const [activeTab, setActiveTab] = useState('Results');
   const tabs = ['Results', 'Plots', 'More Information'];
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const isLoggedIn = currentUser && !currentUser.guest;
 
@@ -327,7 +325,7 @@ const Dashboard = ({ experiment = null, currentUser, onLogout, onProfileClick, o
             {isLoggedIn && (
               <button 
                 className="profile-action-btn btn-upload" 
-                onClick={() => setIsModalOpen(true)}
+                onClick={onUploadClick}
                 style={{ padding: '8px 16px', fontSize: '0.85rem' }}
               >
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '16px', height: '16px', marginRight: '6px', verticalAlign: 'middle' }}>
@@ -393,16 +391,6 @@ const Dashboard = ({ experiment = null, currentUser, onLogout, onProfileClick, o
           </div>
         </main>
       </div>
-
-      <AddExperimentModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-        currentUser={currentUser} 
-        onExperimentAdded={() => {
-            console.log('Experiment added');
-            // In a real app we might want to refresh the experiments list here
-        }}
-      />
     </div>
   );
 };

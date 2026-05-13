@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import './Profile.css';
 import './Dashboard.css';
-import AddExperimentModal from './AddExperimentModal';
 
-const Profile = ({ currentUser, onLogout, onBack, onSettingsClick }) => {
+const Profile = ({ currentUser, onLogout, onBack, onSettingsClick, onUploadClick }) => {
   const [paperCount, setPaperCount] = useState(0);
   const [topTags, setTopTags] = useState([]);
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8001';
@@ -158,7 +155,7 @@ const Profile = ({ currentUser, onLogout, onBack, onSettingsClick }) => {
 
             {/* Action buttons */}
             <div className="profile-actions">
-              <button className="profile-action-btn btn-upload" onClick={() => setIsModalOpen(true)}>
+              <button className="profile-action-btn btn-upload" onClick={onUploadClick}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                   <polyline points="17 8 12 3 7 8" />
@@ -180,13 +177,6 @@ const Profile = ({ currentUser, onLogout, onBack, onSettingsClick }) => {
           </div>
         </main>
       </div>
-
-      <AddExperimentModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-        currentUser={currentUser} 
-        onExperimentAdded={() => setPaperCount(prev => prev + 1)}
-      />
     </div>
   );
 };
