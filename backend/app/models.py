@@ -13,15 +13,6 @@ class UserType(Base):
     type = Column(String(255), nullable=False)
 
 
-class UserAuth(Base):
-    __tablename__ = "user_auth"
-
-    user_auth_id = Column(Integer, primary_key=True)
-    email = Column(String(255), nullable=False)
-    password = Column(String(255), nullable=False)
-    user_user_id = Column(Integer, ForeignKey("user.user_id"), nullable=False)
-
-
 class User(Base):
     __tablename__ = "user"
 
@@ -29,9 +20,6 @@ class User(Base):
     name = Column(String(255), nullable=False)
     surname = Column(String(255), nullable=False)
     org = Column(String(255), nullable=False)
-    user_auth_user_auth_id = Column(
-        Integer, ForeignKey("user_auth.user_auth_id"), nullable=False
-    )
     user_type_user_type_id = Column(
         Integer, ForeignKey("user_type.user_type_id"), nullable=False
     )
