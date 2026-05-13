@@ -1,5 +1,6 @@
+import random
+
 from fastapi import Depends, FastAPI, HTTPException
-from sqlalchemy import and_
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
@@ -150,9 +151,6 @@ def get_user(user_id: int, db: Session = Depends(get_db)):
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
-
-
-import random
 
 
 @app.post("/experiments/full")
