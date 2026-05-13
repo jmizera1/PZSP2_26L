@@ -39,9 +39,27 @@
     height: 16px;
 }
 
+/* Two-column layout */
+.profile-two-columns {
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
+}
+
+.profile-left-column {
+    flex: 0 0 auto;
+    width: 480px;
+    min-width: 380px;
+}
+
+.profile-right-column {
+    flex: 1;
+    min-width: 320px;
+}
+
 /* Profile card */
 .profile-card {
-    max-width: 560px;
+    width: 100%;
     background-color: var(--bg-color-sidebar);
     border: 1px solid var(--border-color);
     border-radius: 12px;
@@ -451,4 +469,204 @@
     opacity: 0.6;
     cursor: not-allowed;
     background: var(--border-color);
+}
+
+/* ─── Profile Text Card (right column) ─── */
+
+.profile-text-card {
+    background-color: var(--bg-color-sidebar);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 36px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+}
+
+.profile-text-card-header {
+    margin-bottom: 28px;
+}
+
+.profile-text-card-header h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+}
+
+.profile-text-card-sub {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.profile-text-field {
+    margin-bottom: 24px;
+}
+
+.profile-text-field label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.profile-text-field label svg {
+    width: 16px;
+    height: 16px;
+    color: var(--text-blue);
+    flex-shrink: 0;
+}
+
+.profile-text-field textarea {
+    width: 100%;
+    background-color: var(--bg-color-input);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    padding: 14px 16px;
+    font-size: 0.9rem;
+    font-family: var(--font-family);
+    line-height: 1.6;
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.profile-text-field textarea:focus {
+    border-color: var(--text-blue);
+    box-shadow: 0 0 0 2px rgba(77, 163, 255, 0.15);
+}
+
+.profile-text-field textarea::placeholder {
+    color: #4a5568;
+}
+
+.profile-text-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+.profile-save-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #4da3ff 0%, #6366f1 100%);
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: var(--font-family);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 15px rgba(77, 163, 255, 0.25);
+}
+
+.profile-save-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(77, 163, 255, 0.35);
+}
+
+.profile-save-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+.profile-saved-msg {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #34d399;
+    animation: savedPop 0.3s ease;
+}
+
+@keyframes savedPop {
+    0%   { opacity: 0; transform: scale(0.8); }
+    50%  { transform: scale(1.1); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+/* ─── MyResearch sidebar mini author ─── */
+
+.sidebar-author-mini {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+    padding: 16px 0;
+}
+
+.myresearch-author-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid var(--border-color);
+}
+
+.myresearch-author-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.myresearch-author-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.myresearch-author-org {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.myresearch-upload-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 16px;
+    background: linear-gradient(135deg, #4da3ff 0%, #6366f1 100%);
+    color: #fff;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: var(--font-family);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 15px rgba(77, 163, 255, 0.3);
+}
+
+.myresearch-upload-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(77, 163, 255, 0.4);
+}
+
+.myresearch-upload-cta svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* ─── Responsive ─── */
+
+@media (max-width: 1100px) {
+    .profile-two-columns {
+        flex-direction: column;
+    }
+
+    .profile-left-column {
+        width: 100%;
+        min-width: unset;
+    }
 }

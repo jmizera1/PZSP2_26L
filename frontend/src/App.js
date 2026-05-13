@@ -6,6 +6,7 @@ import Welcome from "./Welcome";
 import Settings from "./Settings";
 import UploadResearch from "./UploadResearch";
 import SearchExperiments from "./SearchExperiments";
+import MyResearch from "./MyResearch";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -60,6 +61,19 @@ function App() {
         onBack={() => setPage("search")}
         onSettingsClick={() => setPage("settings")}
         onUploadClick={() => setPage("upload")}
+        onMyResearchClick={() => setPage("myresearch")}
+      />
+    );
+  }
+
+  if (page === "myresearch" && !user.guest) {
+    return (
+      <MyResearch
+        currentUser={user}
+        onLogout={handleLogout}
+        onBack={() => setPage("profile")}
+        onUploadClick={() => setPage("upload")}
+        onExperimentClick={handleExperimentClick}
       />
     );
   }
