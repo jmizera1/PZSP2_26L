@@ -20,8 +20,37 @@ function App() {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
+useEffect(() => {
+  const checkSession = async () => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        const userId = payload.sub;
+
+        const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8001';
+        const res = await fetch(`${apiUrl}/users/${userId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (res.ok) {
+          const userData = await res.json();
+          setUser({ ...userData, token: token, guest: false });
+          setPage("search");
+        } else {
+          localStorage.removeItem("token");
+        }
+      } catch (e) {
+        localStorage.removeItem("token");
+      }
+    }
+  };
+
+  checkSession();
+}, []);
 
   const handleLogout = () => {
+    localStorage.removeItem("token");
     setUser(null);
     setPage("welcome");
     setSelectedExperiment(null);

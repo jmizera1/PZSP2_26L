@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
+from typing import List
 
 from . import models, schemas
 from .db import SessionLocal, engine
@@ -84,13 +85,18 @@ def login(creds: LoginRequest, db: Session = Depends(get_db)):
     if not user or not verify_password(creds.password, user.password):
         raise HTTPException(status_code=401, detail="Invalid email or password")
 
-    access_token = create_access_token(data={"sub": user.user_id})
+    access_token = create_access_token(data={"sub": str(user.user_id)})
 
     return {"access_token": access_token, "token_type": "bearer"}
 
 
 @app.get("/users")
 def get_users(db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+    return db.query(models.User).all()
+
+
+@app.get("/researchers", response_model=List[schemas.UserPublic])
+def get_researchers(db: Session = Depends(get_db)):
     return db.query(models.User).all()
 
 
@@ -199,6 +205,13 @@ def get_user(user_id: int, db: Session = Depends(get_db), current_user: models.U
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
+
+@app.get("/researchers/{user_id}", response_model=schemas.UserPublic)
+def get_researcher(user_id: int, db: Session = Depends(get_db)):
+    user = db.query(models.User).filter(models.User.user_id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Researcher not found")
+    return user
 
 @app.post("/experiments/full")
 def create_full_experiment(

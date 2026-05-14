@@ -21,6 +21,16 @@ class User(UserBase):
         from_attributes = True
 
 
+class UserPublic(BaseModel):
+    user_id: int
+    name: str
+    surname: str
+    org: str
+
+    class Config:
+        from_attributes = True
+
+
 class ExperimentCreate(BaseModel):
     name: str
     description: str

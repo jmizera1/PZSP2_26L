@@ -35,8 +35,25 @@ const Login = ({ onLogin }) => {
         throw new Error(data.detail || 'Invalid email or password');
       }
 
-      const user = await res.json();
-      onLogin(user);
+      const data = await res.json();
+
+      localStorage.setItem('token', data.access_token);
+
+      const payload = JSON.parse(atob(data.access_token.split('.')[1]));
+      const userId = payload.sub;
+
+      const userRes = await fetch(`${apiUrl}/users/${userId}`, {
+        headers: { 'Authorization': `Bearer ${data.access_token}` },
+      });
+
+      if (!userRes.ok) {
+        throw new Error('Failed to fetch user data');
+      }
+
+      const userData = await userRes.json();
+
+      onLogin({ ...userData, token: data.access_token, guest: false });
+
     } catch (err) {
       setError(err.message);
     } finally {

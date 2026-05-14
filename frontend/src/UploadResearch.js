@@ -36,6 +36,7 @@ const UploadResearch = ({ currentUser, onLogout, onBack, onSuccess }) => {
     setSubmitError(null);
 
     const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8001';
+    const token = localStorage.getItem('token');
 
     const payload = {
       name: formData.name,
@@ -58,9 +59,18 @@ const UploadResearch = ({ currentUser, onLogout, onBack, onSuccess }) => {
     try {
       const res = await fetch(`${apiUrl}/experiments/full`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify(payload)
       });
+
+      if (res.status === 401) {
+        alert("Your session has expired or is invalid. Please log in again.");
+        if (onLogout) onLogout();
+        return;
+      }
 
       if (!res.ok) {
         throw new Error('Failed to create experiment. Please check all fields.');

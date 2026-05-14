@@ -96,6 +96,17 @@ const Dashboard = ({ experiment = null, currentUser, onLogout, onProfileClick, o
   useEffect(() => {
     if (!experiment) return;
 
+    const token = localStorage.getItem('token');
+    const authHeaders = token ? { 'Authorization': `Bearer ${token}` } : {};
+
+      const fetchUserOrResearcher = async () => {
+        if (token) {
+          const res = await fetch(`${API_URL}/users/${experiment.user_id}`, { headers: authHeaders });
+          if (res.ok) return res;
+        }
+        return fetch(`${API_URL}/researchers/${experiment.user_id}`);
+      };
+
     // Fetch experiment detail
     fetch(`${API_URL}/experiments/${experiment.experiment_id}`)
       .then(r => r.json())
@@ -115,7 +126,7 @@ const Dashboard = ({ experiment = null, currentUser, onLogout, onProfileClick, o
       .catch(() => setMetrics([]));
 
     // Fetch author
-    fetch(`${API_URL}/users/${experiment.user_id}`)
+    fetchUserOrResearcher()
       .then(r => r.json())
       .then(data => { if (data) setAuthor(data); })
       .catch(() => {});
@@ -282,7 +293,7 @@ const Dashboard = ({ experiment = null, currentUser, onLogout, onProfileClick, o
           <hr className="divider" />
           <div className="author-detail">
             <span className="author-detail-label">EMAIL</span>
-            <span className="author-detail-value">{author.email}</span>
+            <span className="author-detail-value">{author.email || 'Unavailable'}</span>
           </div>
           <hr className="divider" />
           <div className="author-detail">
@@ -323,8 +334,8 @@ const Dashboard = ({ experiment = null, currentUser, onLogout, onProfileClick, o
 
           <div className="user-actions">
             {isLoggedIn && (
-              <button 
-                className="profile-action-btn btn-upload" 
+              <button
+                className="profile-action-btn btn-upload"
                 onClick={onUploadClick}
                 style={{ padding: '8px 16px', fontSize: '0.85rem' }}
               >

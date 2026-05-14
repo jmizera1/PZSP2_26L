@@ -15,22 +15,38 @@ const SearchExperiments = ({ currentUser, onLogout, onProfileClick, onBack, onUp
   const isLoggedIn = currentUser && !currentUser.guest;
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const [expRes, usersRes, resultsRes] = await Promise.all([
-          fetch(`${API_URL}/experiments`),
-          fetch(`${API_URL}/users`),
-          fetch(`${API_URL}/results`)
-        ]);
-        const expData = await expRes.json();
-        const usersData = await usersRes.json();
-        const resultsData = await resultsRes.json();
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const authHeaders = token ? { 'Authorization': `Bearer ${token}` } : {};
 
-        setExperiments(expData || []);
-        setUsers(usersData || []);
+      const fetchUsersOrResearchers = async () => {
+        if (token) {
+          const res = await fetch(`${API_URL}/users`, { headers: authHeaders });
+          if (res.ok) return res;
+        }
+        return fetch(`${API_URL}/researchers`);
+      };
 
-        // Build metadata map: experiment_id -> { platforms, workloads, agents }
+      const [expRes, usersRes, resultsRes] = await Promise.all([
+        fetch(`${API_URL}/experiments`),
+        fetchUsersOrResearchers(),
+        fetch(`${API_URL}/results`)
+      ]);
+
+      const expData = expRes.ok ? await expRes.json() : [];
+      const resultsData = resultsRes.ok ? await resultsRes.json() : [];
+
+      let usersData = [];
+      if (usersRes.ok) {
+        usersData = await usersRes.json();
+      } else {
+        console.warn("Failed to fetch both private users and public researchers.");
+      }
+
+      setExperiments(expData || []);
+      setUsers(usersData || []);
         const meta = {};
         (resultsData || []).forEach(r => {
           const eid = r.experiment_experiment_id;
