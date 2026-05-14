@@ -1,15 +1,22 @@
+from typing import List
+
 import jwt
-from jwt import ExpiredSignatureError, InvalidTokenError
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer
+from jwt import ExpiredSignatureError, InvalidTokenError
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
-from typing import List
 
 from . import models, schemas
 from .db import SessionLocal, engine
-from .security import get_password_hash, verify_password, create_access_token, SECRET_KEY, ALGORITHM
+from .security import (
+    ALGORITHM,
+    SECRET_KEY,
+    create_access_token,
+    get_password_hash,
+    verify_password,
+)
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -40,7 +47,9 @@ def get_db():
         db.close()
 
 
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+def get_current_user(
+    token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
+):
     credentials_exception = HTTPException(
         status_code=401,
         detail="Could not validate credentials",
@@ -60,7 +69,7 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         raise HTTPException(
             status_code=401,
             detail="Token has expired. Please log in again.",
-            headers={"WWW-Authenticate": "Bearer"}
+            headers={"WWW-Authenticate": "Bearer"},
         )
     except (InvalidTokenError, ValueError):
         raise credentials_exception
@@ -91,7 +100,9 @@ def login(creds: LoginRequest, db: Session = Depends(get_db)):
 
 
 @app.get("/users")
-def get_users(db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+def get_users(
+    db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)
+):
     return db.query(models.User).all()
 
 
@@ -116,7 +127,11 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
 
 @app.post("/experiments", response_model=schemas.Experiment)
-def create_experiment(exp: schemas.ExperimentCreate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+def create_experiment(
+    exp: schemas.ExperimentCreate,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
     db_exp = models.Experiment(**exp.dict())
     db.add(db_exp)
     db.commit()
@@ -125,7 +140,11 @@ def create_experiment(exp: schemas.ExperimentCreate, db: Session = Depends(get_d
 
 
 @app.post("/results", response_model=schemas.Result)
-def create_result(result: schemas.ResultCreate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+def create_result(
+    result: schemas.ResultCreate,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
     db_result = models.Result(
         experiment_experiment_id=result.experiment_id,
         number_of_agents=result.number_of_agents,
@@ -199,7 +218,11 @@ def get_experiment_metrics(experiment_id: int, db: Session = Depends(get_db)):
 
 
 @app.get("/users/{user_id}")
-def get_user(user_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+def get_user(
+    user_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
     user = db.query(models.User).filter(models.User.user_id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -213,9 +236,12 @@ def get_researcher(user_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Researcher not found")
     return user
 
+
 @app.post("/experiments/full")
 def create_full_experiment(
-    data: schemas.FullExperimentCreate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)
+    data: schemas.FullExperimentCreate,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
 ):
     exp = models.Experiment(
         name=data.name,
