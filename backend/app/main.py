@@ -5,8 +5,7 @@ from sqlalchemy.orm import Session
 
 from . import models, schemas
 from .db import SessionLocal, engine
-
-from .security import verify_password, get_password_hash
+from .security import get_password_hash, verify_password
 
 models.Base.metadata.create_all(bind=engine)
 
