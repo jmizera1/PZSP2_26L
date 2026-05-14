@@ -107,7 +107,7 @@ DELIMITER ;
 SET FOREIGN_KEY_CHECKS = 0;
 
 INSERT INTO user_type (user_type_id, type) VALUES (1, 'admin'), (2, 'user');
-INSERT INTO `user` (user_id, name, surname, org, user_type_user_type_id, email, password) VALUES (1, 'Jan', 'Kowalski', 'AGH', 2, 'jan@agh.edu.pl', 'password');
-INSERT INTO `user` (user_id, name, surname, org, user_type_user_type_id, email, password) VALUES (2, 'Anna', 'Nowak', 'AGH', 1, 'anna@agh.edu.pl', 'password');
+INSERT INTO `user` (user_id, name, surname, org, user_type_user_type_id, email, password) VALUES (1, 'Jan', 'Kowalski', 'AGH', 2, 'jan@agh.edu.pl', '$2b$12$jzPqW4/Hoia0JlxoIwIfW.zooMK2vox7vOfJ1vMIc8s9PBdPimo9G');
+INSERT INTO `user` (user_id, name, surname, org, user_type_user_type_id, email, password) VALUES (2, 'Anna', 'Nowak', 'AGH', 1, 'anna@agh.edu.pl', '$2b$12$jzPqW4/Hoia0JlxoIwIfW.zooMK2vox7vOfJ1vMIc8s9PBdPimo9G');
 
 SET FOREIGN_KEY_CHECKS = 1;
