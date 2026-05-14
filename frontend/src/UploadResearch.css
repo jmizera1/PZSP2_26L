@@ -357,6 +357,108 @@
     max-width: 280px;
 }
 
+/* ─── XLSX Import Button ─── */
+
+.xlsx-import-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 14px 20px;
+    margin-bottom: 28px;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(52, 211, 153, 0.08) 100%);
+    border: 1.5px dashed rgba(52, 211, 153, 0.45);
+    border-radius: 10px;
+    color: #34d399;
+    font-size: 0.92rem;
+    font-weight: 600;
+    font-family: var(--font-family);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    letter-spacing: 0.2px;
+}
+
+.xlsx-import-btn:hover {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(52, 211, 153, 0.14) 100%);
+    border-color: rgba(52, 211, 153, 0.7);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(52, 211, 153, 0.15);
+}
+
+.xlsx-import-btn:active {
+    transform: translateY(0);
+}
+
+.xlsx-import-btn svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+/* ─── Import Status Toast ─── */
+
+.xlsx-import-toast {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    line-height: 1.4;
+    margin-bottom: 20px;
+    animation: toastSlideIn 0.35s ease-out;
+}
+
+.xlsx-import-toast svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.xlsx-import-toast span {
+    flex: 1;
+}
+
+.xlsx-import-toast--success {
+    background-color: rgba(52, 211, 153, 0.1);
+    border: 1px solid rgba(52, 211, 153, 0.3);
+    color: #34d399;
+}
+
+.xlsx-import-toast--error {
+    background-color: rgba(255, 71, 87, 0.1);
+    border: 1px solid rgba(255, 71, 87, 0.3);
+    color: #ff4757;
+}
+
+.toast-close {
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 4px;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+    line-height: 1;
+}
+
+.toast-close:hover {
+    opacity: 1;
+}
+
+@keyframes toastSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* Responsive */
 @media (max-width: 1100px) {
     .upload-split-layout {

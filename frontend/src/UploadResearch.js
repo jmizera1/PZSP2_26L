@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import * as XLSX from 'xlsx';
 import './UploadResearch.css';
 import './Dashboard.css';
 
@@ -24,6 +25,106 @@ const UploadResearch = ({ currentUser, onLogout, onBack, onSuccess }) => {
   const [submitError, setSubmitError] = useState(null);
   const [activePreviewTab, setActivePreviewTab] = useState('Results');
   const previewTabs = ['Results', 'Plots', 'More Information'];
+
+  /* ─── XLSX Import ─── */
+  const fileInputRef = useRef(null);
+  const [importStatus, setImportStatus] = useState(null); // { type: 'success'|'error', message }
+
+  // Mapping from normalised column names → formData keys
+  const COLUMN_MAP = {
+    'name': 'name',
+    'experimentname': 'name',
+    'experiment_name': 'name',
+    'experiment': 'name',
+    'description': 'description',
+    'platformname': 'platform_name',
+    'platform_name': 'platform_name',
+    'platform': 'platform_name',
+    'workload': 'workload',
+    'numberofagents': 'number_of_agents',
+    'number_of_agents': 'number_of_agents',
+    'agents': 'number_of_agents',
+    'numberofrepetitions': 'number_of_repetitions',
+    'number_of_repetitions': 'number_of_repetitions',
+    'repetitions': 'number_of_repetitions',
+    'numberofcontainers': 'number_of_containers',
+    'number_of_containers': 'number_of_containers',
+    'containers': 'number_of_containers',
+    'messagesize': 'message_size',
+    'message_size': 'message_size',
+    'msgsize': 'message_size',
+    'groupsize': 'group_size',
+    'group_size': 'group_size',
+    'ram': 'ram',
+    'ramgb': 'ram',
+    'vcpu': 'vcpu',
+    'throughput': 'throughput',
+    'throughputmsgs': 'throughput',
+    'latency': 'latency',
+    'latencyms': 'latency',
+    'cpuusage': 'cpu_usage',
+    'cpu_usage': 'cpu_usage',
+    'cpu': 'cpu_usage',
+  };
+
+  const normalise = (str) => String(str).toLowerCase().replace(/[^a-z0-9_]/g, '');
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setImportStatus(null);
+
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      try {
+        const data = new Uint8Array(evt.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+        const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+
+        if (!rows || rows.length === 0) {
+          setImportStatus({ type: 'error', message: 'The Excel file contains no data rows.' });
+          return;
+        }
+
+        // Use the first data row
+        const row = rows[0];
+        const newFormData = { ...formData };
+        let matchedCount = 0;
+
+        Object.keys(row).forEach((col) => {
+          const key = normalise(col);
+          const formField = COLUMN_MAP[key];
+          if (formField) {
+            newFormData[formField] = String(row[col]);
+            matchedCount++;
+          }
+        });
+
+        if (matchedCount === 0) {
+          setImportStatus({
+            type: 'error',
+            message: 'No matching columns found. Expected headers like: name, platform_name, workload, number_of_agents, throughput, latency, etc.'
+          });
+          return;
+        }
+
+        setFormData(newFormData);
+        setImportStatus({
+          type: 'success',
+          message: `Successfully imported ${matchedCount} field${matchedCount > 1 ? 's' : ''} from "${file.name}".`
+        });
+      } catch (err) {
+        console.error('XLSX parse error:', err);
+        setImportStatus({ type: 'error', message: 'Failed to parse the Excel file. Please check the format.' });
+      }
+    };
+    reader.readAsArrayBuffer(file);
+
+    // Reset so the same file can be re-uploaded if needed
+    e.target.value = '';
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -289,10 +390,52 @@ const UploadResearch = ({ currentUser, onLogout, onBack, onSuccess }) => {
             <h1 className="page-title">Upload New Research</h1>
           </div>
 
+          {/* XLSX import status toast */}
+          {importStatus && (
+            <div className={`xlsx-import-toast xlsx-import-toast--${importStatus.type}`}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                {importStatus.type === 'success' ? (
+                  <><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></>
+                ) : (
+                  <><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></>
+                )}
+              </svg>
+              <span>{importStatus.message}</span>
+              <button className="toast-close" onClick={() => setImportStatus(null)} type="button">&times;</button>
+            </div>
+          )}
+
           <div className="upload-split-layout">
             {/* Left: Form */}
             <div className="upload-form-column">
               <div className="upload-card">
+                {/* Hidden file input for XLSX */}
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  accept=".xlsx,.xls"
+                  style={{ display: 'none' }}
+                  onChange={handleFileUpload}
+                  id="xlsx-file-input"
+                />
+
+                {/* Import from Excel button */}
+                <button
+                  type="button"
+                  className="xlsx-import-btn"
+                  onClick={() => fileInputRef.current.click()}
+                  id="xlsx-import-button"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="12" y1="18" x2="12" y2="12" />
+                    <line x1="9" y1="15" x2="12" y2="12" />
+                    <line x1="15" y1="15" x2="12" y2="12" />
+                  </svg>
+                  Import from Excel (.xlsx)
+                </button>
+
                 {submitError && (
                   <div className="upload-error">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
