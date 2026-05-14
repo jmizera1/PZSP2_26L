@@ -6,6 +6,8 @@ from sqlalchemy.orm import Session
 from . import models, schemas
 from .db import SessionLocal, engine
 
+from .security import verify_password, get_password_hash
+
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
@@ -41,8 +43,10 @@ def root():
 @app.post("/login")
 def login(creds: LoginRequest, db: Session = Depends(get_db)):
     user = db.query(models.User).filter(models.User.email == creds.email).first()
-    if not user or user.password != creds.password:
+
+    if not user or not verify_password(creds.password, user.password):
         raise HTTPException(status_code=401, detail="Invalid email or password")
+
     return user
 
 
@@ -53,7 +57,13 @@ def get_users(db: Session = Depends(get_db)):
 
 @app.post("/users", response_model=schemas.User)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    db_user = models.User(**user.dict())
+    user_data = user.dict()
+
+    hashed_password = get_password_hash(user_data["password"])
+
+    user_data["password"] = hashed_password
+
+    db_user = models.User(**user_data)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
