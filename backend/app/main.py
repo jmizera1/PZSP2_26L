@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from . import models, schemas
 from .db import SessionLocal, engine
-from .security import get_password_hash, verify_password
+from .security import get_password_hash, verify_password, create_access_token
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -46,7 +46,9 @@ def login(creds: LoginRequest, db: Session = Depends(get_db)):
     if not user or not verify_password(creds.password, user.password):
         raise HTTPException(status_code=401, detail="Invalid email or password")
 
-    return user
+    access_token = create_access_token(data={"sub": user.user_id})
+
+    return {"access_token": access_token, "token_type": "bearer"}
 
 
 @app.get("/users")
