@@ -7,12 +7,11 @@ class UserBase(BaseModel):
     org: str
     email: str
     password: str
-    user_auth_user_auth_id: int
     user_type_user_type_id: int
 
 
 class UserCreate(UserBase):
-    user_id: int
+    pass
 
 
 class User(UserBase):
@@ -23,7 +22,6 @@ class User(UserBase):
 
 
 class ExperimentCreate(BaseModel):
-    experiment_id: int
     name: str
     description: str
     user_id: int

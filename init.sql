@@ -1,33 +1,22 @@
 CREATE TABLE user_type (
-   user_type_id INT NOT NULL,
+   user_type_id INT AUTO_INCREMENT NOT NULL,
    type         VARCHAR(255) NOT NULL,
    PRIMARY KEY (user_type_id)
 );
 
-CREATE TABLE user_auth (
-   user_auth_id INT NOT NULL,
-   email        VARCHAR(255) NOT NULL,
-   password     VARCHAR(255) NOT NULL,
-   user_user_id INT NOT NULL,
-   PRIMARY KEY (user_auth_id)
-);
-
 CREATE TABLE `user` (
-   user_id                INT NOT NULL,
+   user_id                INT AUTO_INCREMENT NOT NULL,
    name                   VARCHAR(255) NOT NULL,
    surname                VARCHAR(255) NOT NULL,
    org                    VARCHAR(255) NOT NULL,
-   user_auth_user_auth_id INT NOT NULL,
    user_type_user_type_id INT NOT NULL,
    email                  VARCHAR(255) NOT NULL,
    password               VARCHAR(255) NOT NULL,
    PRIMARY KEY (user_id)
 );
 
-CREATE UNIQUE INDEX user__idx ON `user` (user_auth_user_auth_id ASC);
-
 CREATE TABLE experiment (
-   experiment_id INT NOT NULL,
+   experiment_id INT AUTO_INCREMENT NOT NULL,
    name          VARCHAR(255) NOT NULL,
    creation_date DATE NOT NULL,
    description   TEXT,
@@ -37,7 +26,7 @@ CREATE TABLE experiment (
 );
 
 CREATE TABLE result (
-   result_id                INT NOT NULL,
+   result_id                INT AUTO_INCREMENT NOT NULL,
    experiment_experiment_id INT NOT NULL,
    number_of_containers     INT,
    platform_name            VARCHAR(255),
@@ -52,13 +41,13 @@ CREATE TABLE result (
 );
 
 CREATE TABLE unit (
-   unit_id INT NOT NULL,
+   unit_id INT AUTO_INCREMENT NOT NULL,
    unit    VARCHAR(255) NOT NULL,
    PRIMARY KEY (unit_id)
 );
 
 CREATE TABLE metric (
-   metric_id    INT NOT NULL,
+   metric_id    INT AUTO_INCREMENT NOT NULL,
    name         VARCHAR(255) NOT NULL,
    unit         VARCHAR(255) NOT NULL,
    unit_unit_id INT NOT NULL,
@@ -66,7 +55,7 @@ CREATE TABLE metric (
 );
 
 CREATE TABLE experiment_metric (
-   experiment_metric_id INT NOT NULL,
+   experiment_metric_id INT AUTO_INCREMENT NOT NULL,
    value                FLOAT NOT NULL,
    id1                  INT NOT NULL,
    metric_metric_id     INT NOT NULL,
@@ -95,14 +84,6 @@ ALTER TABLE result
    ADD CONSTRAINT result_experiment_fk FOREIGN KEY (experiment_experiment_id)
       REFERENCES experiment (experiment_id);
 
-ALTER TABLE user_auth
-   ADD CONSTRAINT user_auth_user_fk FOREIGN KEY (user_user_id)
-      REFERENCES `user` (user_id);
-
-ALTER TABLE `user`
-   ADD CONSTRAINT user_user_auth_fk FOREIGN KEY (user_auth_user_auth_id)
-      REFERENCES user_auth (user_auth_id);
-
 ALTER TABLE `user`
    ADD CONSTRAINT user_user_type_fk FOREIGN KEY (user_type_user_type_id)
       REFERENCES user_type (user_type_id);
@@ -120,34 +101,13 @@ BEGIN
 END;
 //
 
-CREATE TRIGGER fkntm_user BEFORE UPDATE ON `user`
-FOR EACH ROW
-BEGIN
-   IF NEW.user_auth_user_auth_id != OLD.user_auth_user_auth_id THEN
-      SIGNAL SQLSTATE '45000'
-      SET MESSAGE_TEXT = 'Non Transferable FK constraint on table User is violated';
-   END IF;
-END;
-//
-
-CREATE TRIGGER fkntm_user_auth BEFORE UPDATE ON user_auth
-FOR EACH ROW
-BEGIN
-   IF NEW.user_user_id != OLD.user_user_id THEN
-      SIGNAL SQLSTATE '45000'
-      SET MESSAGE_TEXT = 'Non Transferable FK constraint on table User_Auth is violated';
-   END IF;
-END;
-//
-
 DELIMITER ;
 
 -- Seed data
 SET FOREIGN_KEY_CHECKS = 0;
 
 INSERT INTO user_type (user_type_id, type) VALUES (1, 'admin'), (2, 'user');
-INSERT INTO user_auth (user_auth_id, email, password, user_user_id) VALUES (1, 'jan@agh.edu.pl', 'password', 1), (2, 'anna@agh.edu.pl', 'password', 2);
-INSERT INTO `user` (user_id, name, surname, org, user_auth_user_auth_id, user_type_user_type_id, email, password) VALUES (1, 'Jan', 'Kowalski', 'AGH', 1, 2, 'jan@agh.edu.pl', 'password');
-INSERT INTO `user` (user_id, name, surname, org, user_auth_user_auth_id, user_type_user_type_id, email, password) VALUES (2, 'Anna', 'Nowak', 'AGH', 2, 1, 'anna@agh.edu.pl', 'password');
+INSERT INTO `user` (user_id, name, surname, org, user_type_user_type_id, email, password) VALUES (1, 'Jan', 'Kowalski', 'AGH', 2, 'jan@agh.edu.pl', 'password');
+INSERT INTO `user` (user_id, name, surname, org, user_type_user_type_id, email, password) VALUES (2, 'Anna', 'Nowak', 'AGH', 1, 'anna@agh.edu.pl', 'password');
 
 SET FOREIGN_KEY_CHECKS = 1;
