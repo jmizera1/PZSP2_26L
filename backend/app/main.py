@@ -1,15 +1,20 @@
+import jwt
+from jwt import ExpiredSignatureError, InvalidTokenError
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from . import models, schemas
 from .db import SessionLocal, engine
-from .security import get_password_hash, verify_password, create_access_token
+from .security import get_password_hash, verify_password, create_access_token, SECRET_KEY, ALGORITHM
 
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 
 class LoginRequest(BaseModel):
@@ -34,6 +39,39 @@ def get_db():
         db.close()
 
 
+def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    credentials_exception = HTTPException(
+        status_code=401,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+
+        user_id_str: str = payload.get("sub")
+        if user_id_str is None:
+            raise credentials_exception
+
+        token_user_id = int(user_id_str)
+
+    except ExpiredSignatureError:
+        raise HTTPException(
+            status_code=401,
+            detail="Token has expired. Please log in again.",
+            headers={"WWW-Authenticate": "Bearer"}
+        )
+    except (InvalidTokenError, ValueError):
+        raise credentials_exception
+
+    user = db.query(models.User).filter(models.User.user_id == token_user_id).first()
+
+    if user is None:
+        raise credentials_exception
+
+    return user
+
+
 @app.get("/")
 def root():
     return {"message": "API running"}
@@ -52,7 +90,7 @@ def login(creds: LoginRequest, db: Session = Depends(get_db)):
 
 
 @app.get("/users")
-def get_users(db: Session = Depends(get_db)):
+def get_users(db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     return db.query(models.User).all()
 
 
@@ -72,7 +110,7 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
 
 @app.post("/experiments", response_model=schemas.Experiment)
-def create_experiment(exp: schemas.ExperimentCreate, db: Session = Depends(get_db)):
+def create_experiment(exp: schemas.ExperimentCreate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     db_exp = models.Experiment(**exp.dict())
     db.add(db_exp)
     db.commit()
@@ -81,7 +119,7 @@ def create_experiment(exp: schemas.ExperimentCreate, db: Session = Depends(get_d
 
 
 @app.post("/results", response_model=schemas.Result)
-def create_result(result: schemas.ResultCreate, db: Session = Depends(get_db)):
+def create_result(result: schemas.ResultCreate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     db_result = models.Result(
         experiment_experiment_id=result.experiment_id,
         number_of_agents=result.number_of_agents,
@@ -164,13 +202,13 @@ def get_user(user_id: int, db: Session = Depends(get_db)):
 
 @app.post("/experiments/full")
 def create_full_experiment(
-    data: schemas.FullExperimentCreate, db: Session = Depends(get_db)
+    data: schemas.FullExperimentCreate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)
 ):
     exp = models.Experiment(
         name=data.name,
         description=data.description,
-        user_id=data.user_id,
-        user_id1=data.user_id,
+        user_id=current_user.user_id,
+        user_id1=current_user.user_id,
     )
     db.add(exp)
     db.flush()
